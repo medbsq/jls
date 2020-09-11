@@ -42,17 +42,21 @@ echo $3
 
 function jls(){
 	mkdir -p jls_$1 
+#	echo "$3"
 	for i in $3 ;do 
-		template="~/jls_templates/$i"
+		template="/home/medbsq/jls_templates/$i"
 		output="./jls_$1/$i.txt"
+		#echo "$template"
 		if [ -f $template ];then
 			echo  -ne "\e[33mtemplate :  $i"\\r
-			jaeles scan -s   $template    -U $1 -o $output  -c $2  
-			echo "$i		[$(date +%D__%X)]" >> ./jls_$1/.logs
+#			jaeles scan -s   $template    -U $1 -o $output  -c $2 
+		        jaeles scan -c $2 -s $template -v -U $1 -o $output
+#		-c 100 -s   jls_templates/aircontrol-rce.yaml -o p
+#			echo "$i		[$(date +%D__%X)]" >> ./jls_$1/.logs
 		fi
 	done
 	echo "------------------------------------------------------------------------------------------------------------" >> ./jls_$1/.logs
-	find ./$output -empty -delete
+	find ./$output -empty -delete &> /dev/null
 }
 
 
@@ -67,7 +71,7 @@ function update_tmp(){
 #transfer tmp process
 
         for i in   common  cves  fuzz  mics  passives  probe   sensitive;do
-	cp ~/jaeles-signatures/$i/* ~/jls_templates
+	cp $(find ~/jaeles-signatures/$i  -iname "*.yaml" )   ~/jls_templates &> /dev/null
         done
 
 #custom templates
